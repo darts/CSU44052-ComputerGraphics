@@ -1,0 +1,22 @@
+*.suo
+*.db
+*.vcxproj
+*.filters
+*.user
+*.cmake
+*.pc
+*.sln
+*.log
+*.bin
+*.tlog
+*.exe
+*.ipch
+*.idb
+*.pdb
+*.dll
+*.recipe
+*.ilk
+MidTermAssignment/imports/*
+MidTermAssignment/External Libraries/*
+MidTermAssignment/models/bag/*
+MidTermAssignment/VS/MidTerm/MidTerm/x64/*
