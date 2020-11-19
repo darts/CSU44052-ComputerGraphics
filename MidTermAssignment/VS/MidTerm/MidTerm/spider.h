@@ -5,31 +5,30 @@
 #include <model.h>
 #include <leg.h>
 
+#pragma warning (disable: 4244) //getting the compiler to shut up about converting doubles to floats
+
 class Spider {
 public:
-	enum Spider_Directions {
+	enum class Spider_Directions {
 		FORWARDS,
 		BACKWARDS,
 		LEFT,
 		RIGHT
 	};
+
 	const int legCount = 8;
-	const float turnSpeed = 0.4;
+	const float turnSpeed = 0.4f;
 	const int turnLegSpeedMultiplier = 8;
 	const int walkLegSpeedMultiplier = 5;
 	float loc = 0;
-	//glm::vec3 locVec;
 	glm::vec3 legTranslation = glm::vec3(1.0f, 0.0f, 0.0f);
-	//float legRotation;
 	glm::mat4 bodyModelMat = glm::mat4(1.0f);
 	Model bodyModel;
 	Leg legs[8];
 
-	Spider() {
-		
-	}
+	Spider() {}
 
-	void init() {
+	void Init() {
 		initBody();
 		initLegs();
 	}
@@ -39,26 +38,27 @@ public:
 		drawLegs(shader);
 	}
 
+	//handles key presses
+	//including the time thing makes movement smoother
+	//otherwise movement speed is seriously affected by the frame time
 	void HandleKeyPress(Spider_Directions direction, float deltaTime) {
 		float velocity = 1 * deltaTime;
-		if (direction == this->FORWARDS) {
+		if (direction == Spider_Directions::FORWARDS) {
 			this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(1.0 * velocity, 0.0f, 0.0f));
 			this->loc += walkLegSpeedMultiplier * velocity;
 		}
-		if (direction == this->BACKWARDS) {
+		if (direction == Spider_Directions::BACKWARDS) {
 			this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(-1.0 * velocity, 0.0f, 0.0f));
 			this->loc -= walkLegSpeedMultiplier * velocity;
 		}
-		if (direction == this->LEFT) {
+		if (direction == Spider_Directions::LEFT) {
 			this->bodyModelMat = glm::rotate(this->bodyModelMat, -turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
 			this->loc -= turnLegSpeedMultiplier * velocity;
 		}
-		if (direction == this->RIGHT) {
+		if (direction == Spider_Directions::RIGHT) {
 			this->bodyModelMat = glm::rotate(this->bodyModelMat, turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
 			this->loc += turnLegSpeedMultiplier * velocity;
 		}
-
-		
 
 		updateLegPos();
 	}	
@@ -66,12 +66,10 @@ public:
 private:
 	void updateLegPos() {
 		for (int i = 0; i < legCount; i++) {
-			legs[i].updateLoc(this->loc);
-			legs[i].updateMat(this->bodyModelMat);
+			legs[i].UpdateLoc(this->loc);
+			legs[i].UpdateMat(this->bodyModelMat);
 		}
 	}
-
-
 
 	void initBody() {
 		this->bodyModelMat = glm::rotate(this->bodyModelMat, (float)(atan(1) * 4 / 2), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -129,9 +127,7 @@ private:
 	}
 
 	void drawBody(Shader& shader) {
-		//glm::mat4 loc = glm::mat4(1.0f);
-		//loc = glm::translate(loc, glm::vec3(-0.5f, 1.0f, 0.0f));
-		shader.setMat4("model", this->bodyModelMat);
+		shader.SetMat4("model", this->bodyModelMat);
 		bodyModel.Draw(shader);
 	}
 

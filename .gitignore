@@ -20,3 +20,6 @@ MidTermAssignment/imports/*
 MidTermAssignment/External Libraries/*
 MidTermAssignment/models/bag/*
 MidTermAssignment/VS/MidTerm/MidTerm/x64/*
+*.db-shm
+*.db-wal
+*.opendb

@@ -10,83 +10,77 @@
 #include <model.h>
 #include <Spider.h>
 
+#pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
+
+//default window dimensions
 const unsigned int WIN_WIDTH = 800;
 const unsigned int WIN_HEIGHT = 600;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-float lastX = WIN_WIDTH / 2.0f;
-float lastY = WIN_HEIGHT / 2.0f;
-bool firstMouse = true;
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f)); //start the camera back a bit so it doesn't end up inside the model
+float previous_mouse_x_pos = WIN_WIDTH / 2.0f; 
+float previous_mouse_y_pos = WIN_HEIGHT / 2.0f;
+bool first_mouse_callback = true;
 
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
+float time_diff = 0.0f;	// time between current frame and last frame
+float previous_frame = 0.0f;
 
-Spider theSpider;
-//Leg firstLeg;
+Spider the_spider;
 
 //callback for resizing window
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) 
+void FramebufferSizeCallback(GLFWwindow* window, int width, int height) 
 {
 	glViewport(0, 0, width, height);
 }
 
-void render(GLFWwindow* window, int shaderProgram, int VAO) {
-	
-}
-
-void processInput(GLFWwindow* window)
+void KeyPressHandler(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
 	//camera
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera_Directions::FORWARDS, deltaTime);
+		camera.HandleKeyPress(Camera::Camera_Directions::FORWARDS, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera_Directions::BACKWARDS, deltaTime);
+		camera.HandleKeyPress(Camera::Camera_Directions::BACKWARDS, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera_Directions::LEFT, deltaTime);
+		camera.HandleKeyPress(Camera::Camera_Directions::LEFT, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera_Directions::RIGHT, deltaTime);
+		camera.HandleKeyPress(Camera::Camera_Directions::RIGHT, time_diff);
 
 	//spider
 	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-		theSpider.HandleKeyPress(Spider::Spider_Directions::FORWARDS, deltaTime);
+		the_spider.HandleKeyPress(Spider::Spider_Directions::FORWARDS, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		theSpider.HandleKeyPress(Spider::Spider_Directions::BACKWARDS, deltaTime);
+		the_spider.HandleKeyPress(Spider::Spider_Directions::BACKWARDS, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		theSpider.HandleKeyPress(Spider::Spider_Directions::LEFT, deltaTime);
+		the_spider.HandleKeyPress(Spider::Spider_Directions::LEFT, time_diff);
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		theSpider.HandleKeyPress(Spider::Spider_Directions::RIGHT, deltaTime);
+		the_spider.HandleKeyPress(Spider::Spider_Directions::RIGHT, time_diff);
 
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void MouseMoveCallback(GLFWwindow* window, double mouse_x_pos, double mouse_y_pos)
 {
-	if (firstMouse)
+	if (first_mouse_callback)
 	{
-		lastX = (float)xpos;
-		lastY = (float)ypos;
-		firstMouse = false;
+		previous_mouse_x_pos = (float)mouse_x_pos;
+		previous_mouse_y_pos = (float)mouse_y_pos;
+		first_mouse_callback = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float mouse_move_x = (float)mouse_x_pos - previous_mouse_x_pos;
+	float mouse_move_y = previous_mouse_y_pos - (float)mouse_y_pos;
 
-	lastX = (float)xpos;
-	lastY = (float)ypos;
+	camera.HandleMouseMove(mouse_move_x, mouse_move_y);
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	previous_mouse_x_pos = (float)mouse_x_pos;
+	previous_mouse_y_pos = (float)mouse_y_pos;
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void MouseScrollCallback(GLFWwindow* window, double scroll_x, double scroll_y)
 {
-	camera.ProcessMouseScroll(yoffset);
+	camera.HandleMouseScroll((float)scroll_y);
 }
 
 
@@ -97,7 +91,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Mid Term Assignment", NULL, NULL);
 	if (window == NULL) //make sure window was created
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -108,48 +102,50 @@ int main()
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) //make sure glad was loaded
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		std::cout << "Failed to load GLAD" << std::endl;
 		return -1;
 	}
 
-	glViewport(0, 0, 800, 600); //create viewport
+	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT); //create viewport
 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //register callback for window resizing
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback); //window resizing
+	glfwSetCursorPosCallback(window, MouseMoveCallback);
+	glfwSetScrollCallback(window, MouseScrollCallback);
 
-	// tell GLFW to capture our mouse
+	//enable mouse movements
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	Shader ourShader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.fs");
+	Shader the_shader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.fs");
 	
-	theSpider.init();
+	the_spider.Init();
 
-	glEnable(GL_DEPTH_TEST); //consider depth when rendering
+	//consider depth when rendering
+	//Prevents triangles being drawn over the things they are spacially behind
+	glEnable(GL_DEPTH_TEST); 
 
 	while (!glfwWindowShouldClose(window))
 	{
-		// per-frame time logic
-		// --------------------
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		//manage frame time variance
+		float current_frame = (float)glfwGetTime();
+		time_diff = current_frame - previous_frame;
+		previous_frame = current_frame;
 
-		processInput(window); //check for user input
+		KeyPressHandler(window); //check for user input
   
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ourShader.use();
+		the_shader.use();
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setFloat("scale_factor", 10.0f);
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+		//generate perspective projection matrix
+		glm::mat4 projection = glm::perspective(glm::radians(camera.camera_zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+		//generate view matrix
+		glm::mat4 view = camera.GenerateCameraViewMatrix();
+		the_shader.SetFloat("scale_factor", 10.0f); //adjust object scaling
+		the_shader.SetMat4("projection", projection);
+		the_shader.SetMat4("view", view);
 
-		theSpider.Draw(ourShader);
-		//firstLeg.Draw(ourShader);
+		the_spider.Draw(the_shader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
