@@ -9,6 +9,7 @@
 #include <camera.h>
 #include <model.h>
 #include <Spider.h>
+#include <ground.h>
 
 #pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
 
@@ -116,6 +117,9 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	Shader the_shader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/triShader.fs");
+	Shader ground_shader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/ground_shader.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/ground_shader.fs");
+
+	Ground the_ground = Ground(glm::mat4(1.0f));
 	
 	the_spider.Init();
 
@@ -146,6 +150,14 @@ int main()
 		the_shader.SetMat4("view", view);
 
 		the_spider.Draw(the_shader);
+
+		ground_shader.use();
+
+		ground_shader.SetFloat("scale_factor", 5.0f);
+		ground_shader.SetMat4("projection", projection);
+		ground_shader.SetMat4("view", view);
+
+		the_ground.Draw(ground_shader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
