@@ -14,8 +14,8 @@
 #pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
 
 //default window dimensions
-const unsigned int WIN_WIDTH = 800;
-const unsigned int WIN_HEIGHT = 600;
+const unsigned int WIN_WIDTH = 1600 / 1.2;
+const unsigned int WIN_HEIGHT = 1200 / 1.2;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f)); //start the camera back a bit so it doesn't end up inside the model
 float previous_mouse_x_pos = WIN_WIDTH / 2.0f; 
@@ -79,6 +79,7 @@ void MouseMoveCallback(GLFWwindow* window, double mouse_x_pos, double mouse_y_po
 	previous_mouse_y_pos = (float)mouse_y_pos;
 }
 
+//we can ignore scrolling in x direction bc a normal scrollwheel, being vertical, only moves in the y direction
 void MouseScrollCallback(GLFWwindow* window, double scroll_x, double scroll_y)
 {
 	camera.HandleMouseScroll((float)scroll_y);
@@ -92,7 +93,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Mid Term Assignment", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Mid Term Assignment", NULL, NULL);
 	if (window == NULL) //make sure window was created
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;

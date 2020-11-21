@@ -20,6 +20,7 @@ public:
 	const float turnSpeed = 0.4f;
 	const int turnLegSpeedMultiplier = 8;
 	const int walkLegSpeedMultiplier = 5;
+	const float movement_speed_modifier = 1.0f;
 	float loc = 0;
 	glm::vec3 legTranslation = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::mat4 bodyModelMat = glm::mat4(1.0f);
@@ -41,8 +42,8 @@ public:
 	//handles key presses
 	//including the time thing makes movement smoother
 	//otherwise movement speed is seriously affected by the frame time
-	void HandleKeyPress(Spider_Directions direction, float deltaTime) {
-		float velocity = 1 * deltaTime;
+	void HandleKeyPress(Spider_Directions direction, float frame_time) {
+		float velocity = movement_speed_modifier * frame_time;
 		if (direction == Spider_Directions::FORWARDS) {
 			this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(1.0 * velocity, 0.0f, 0.0f));
 			this->loc += walkLegSpeedMultiplier * velocity;

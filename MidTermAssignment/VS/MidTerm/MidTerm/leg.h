@@ -47,13 +47,14 @@ public:
 		upperLegModel.Draw(shader);
 
 		glm::mat4 lowerModel = glm::mat4(1.0f);
-		lowerModel = upperModel * lowerModel;
+		
 		lowerModel = glm::translate(lowerModel, glm::vec3(0.0f, 0.6f, 0.0f));
 		float lowerLegRotOffset = 20;
 		float lowerSin = getLowerLegHeight();
 		lowerModel = glm::rotate(lowerModel, lowerSin + lowerLegRotOffset, glm::vec3(1.0f, 0.0f, 0.0f));
 		lowerModel = glm::translate(lowerModel, glm::vec3(0.0f, 0.2f, 0.2f));
 
+		lowerModel = upperModel * lowerModel;
 		shader.SetMat4("model", lowerModel);
 		lowerLegModel.Draw(shader);
 	}
