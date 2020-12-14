@@ -1,3 +1,6 @@
+#ifndef SPIDER_BOI
+#define SPIDER_BOI
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -7,8 +10,17 @@
 
 #pragma warning (disable: 4244) //getting the compiler to shut up about converting doubles to floats
 
+constexpr float OFFSET_TWEAK = 4.0f;
+constexpr int legCount = 8;
+constexpr float turnSpeed = 0.4f;
+constexpr int turnLegSpeedMultiplier = 8;
+constexpr int walkLegSpeedMultiplier = 5;
+constexpr float movement_speed_modifier = 1.0f;
+
 class Spider {
 public:
+	float x_pos, y_pos, orientation;
+
 	enum class Spider_Directions {
 		FORWARDS,
 		BACKWARDS,
@@ -16,21 +28,28 @@ public:
 		RIGHT
 	};
 
-	const int legCount = 8;
-	const float turnSpeed = 0.4f;
-	const int turnLegSpeedMultiplier = 8;
-	const int walkLegSpeedMultiplier = 5;
-	const float movement_speed_modifier = 1.0f;
-	float loc = 0;
-	glm::vec3 legTranslation = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::mat4 bodyModelMat = glm::mat4(1.0f);
-	Model bodyModel;
-	Leg legs[8];
-
 	Spider() {}
+
+	Spider(float x_offset, float y_offset, float orientation) {
+		x_pos = x_offset;
+		y_pos = y_offset;
+		orientation = orientation;
+		Init();
+	}
+
+	void Init(float x_offset, float y_offset, float orientation) {
+		this->x_pos = x_offset;
+		this->y_pos = y_offset;
+		this->orientation = orientation;
+		Init();
+	}
 
 	void Init() {
 		initBody();
+		moveForward(x_pos * OFFSET_TWEAK);
+		turnRight(90 / turnSpeed);
+		moveForward(y_pos * OFFSET_TWEAK);
+		turnLeft(90 / turnSpeed);
 		initLegs();
 	}
 
@@ -45,31 +64,62 @@ public:
 	void HandleKeyPress(Spider_Directions direction, float frame_time) {
 		float velocity = movement_speed_modifier * frame_time;
 		if (direction == Spider_Directions::FORWARDS) {
-			this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(1.0 * velocity, 0.0f, 0.0f));
-			this->loc += walkLegSpeedMultiplier * velocity;
+			moveForward(velocity);
 		}
 		if (direction == Spider_Directions::BACKWARDS) {
-			this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(-1.0 * velocity, 0.0f, 0.0f));
-			this->loc -= walkLegSpeedMultiplier * velocity;
+			moveBackward(velocity);
 		}
 		if (direction == Spider_Directions::LEFT) {
-			this->bodyModelMat = glm::rotate(this->bodyModelMat, -turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
-			this->loc -= turnLegSpeedMultiplier * velocity;
+			turnLeft(velocity);
 		}
 		if (direction == Spider_Directions::RIGHT) {
-			this->bodyModelMat = glm::rotate(this->bodyModelMat, turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
-			this->loc += turnLegSpeedMultiplier * velocity;
+			turnRight(velocity);
 		}
 
 		updateLegPos();
 	}	
 
 private:
+	float loc = 0;
+	glm::vec3 legTranslation = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::mat4 bodyModelMat = glm::mat4(1.0f);
+	Model bodyModel;
+	Leg legs[8];
+
+	void moveForward(float velocity) {
+		this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(1.0 * velocity, 0.0f, 0.0f));
+		//this->x_pos += 
+		this->loc += walkLegSpeedMultiplier * velocity;
+	}
+
+	void moveBackward(float velocity) {
+		this->bodyModelMat = glm::translate(this->bodyModelMat, glm::vec3(-1.0 * velocity, 0.0f, 0.0f));
+		this->loc -= walkLegSpeedMultiplier * velocity;
+	}
+
+	void turnLeft(float velocity) {
+		this->bodyModelMat = glm::rotate(this->bodyModelMat, -turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
+		this->loc -= turnLegSpeedMultiplier * velocity;
+		this->orientation -= turnSpeed * velocity;
+		normaliseOrientation();
+	}
+
+	void turnRight(float velocity) {
+		this->bodyModelMat = glm::rotate(this->bodyModelMat, turnSpeed * velocity, glm::vec3(0.0f, 0.0f, 1.0f));
+		this->loc += turnLegSpeedMultiplier * velocity;
+		this->orientation += turnSpeed * velocity;
+		normaliseOrientation();
+	}
+
 	void updateLegPos() {
 		for (int i = 0; i < legCount; i++) {
 			legs[i].UpdateLoc(this->loc);
 			legs[i].UpdateMat(this->bodyModelMat);
 		}
+	}
+
+	void normaliseOrientation() {
+		this->orientation = fmod(this->orientation, 360.0f);
 	}
 
 	void initBody() {
@@ -138,3 +188,4 @@ private:
 		}
 	}
 };
+#endif // !SPIDER_BOI
