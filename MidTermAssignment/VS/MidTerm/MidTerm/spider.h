@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef SPIDER_BOI
 #define SPIDER_BOI
 

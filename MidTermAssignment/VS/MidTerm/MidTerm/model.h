@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -142,6 +143,10 @@ private:
         }
 
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+        Colour colour_vals = loadMaterialColours(material);
+
+
         // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
         // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
         // Same applies to other texture as the following list summarizes:
@@ -162,7 +167,22 @@ private:
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-        return Mesh(vertices, indices, textures);
+        return Mesh(vertices, indices, textures, colour_vals);
+    }
+
+    Colour loadMaterialColours(aiMaterial* mat) {
+        Colour col_placeholder;
+        aiColor3D tst_diff, tst_ambient, tst_spec;
+        mat->Get(AI_MATKEY_COLOR_DIFFUSE, tst_diff);
+        mat->Get(AI_MATKEY_COLOR_AMBIENT, tst_ambient);
+        mat->Get(AI_MATKEY_COLOR_SPECULAR, tst_spec);
+        col_placeholder.diffuse = glm::vec3(tst_diff[0], tst_diff[1], tst_diff[2]);
+        col_placeholder.ambient = glm::vec3(tst_ambient[0], tst_ambient[1], tst_ambient[2]);
+        col_placeholder.specular = glm::vec3(tst_spec[0], tst_spec[1], tst_spec[2]);
+
+        mat->Get(AI_MATKEY_OPACITY, col_placeholder.opacity);
+        return col_placeholder;
+        //mat->Get(AI_MATKEY_COLOR_DIFFUSE, col_placeholder.diffuse);
     }
 
     vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)

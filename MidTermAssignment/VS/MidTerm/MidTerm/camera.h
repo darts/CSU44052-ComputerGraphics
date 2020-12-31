@@ -28,7 +28,7 @@ public:
     float camera_yaw = -90.0f, camera_pitch = 0.0f; 
 
     //default movement characteristics
-    float movement_speed = 2.5f, mouse_speed = 0.05f;
+    float movement_speed = 10.0f, mouse_speed = 0.05f;
 
     //default zoom level
     float camera_zoom = MIN_ZOOM;

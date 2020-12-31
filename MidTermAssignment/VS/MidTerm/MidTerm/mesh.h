@@ -1,3 +1,9 @@
+#pragma once
+
+#ifndef MESH_H
+#define MESH_H
+
+
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
@@ -23,19 +29,34 @@ struct Texture {
     string path;
 };
 
+struct Colour {
+    glm::vec3 diffuse = glm::vec3(1.0f, 1.0f, 1.0f); //COLOR_DIFFUSE - Kd
+    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f); //COLOR_SPECULAR - Ks
+    glm::vec3 ambient = glm::vec3(1.0f, 1.0f, 1.0f); //COLOR_AMBIENT - Ka
+    //COLOR_EMISSIVE
+    //COLOR_TRANSPARENT
+    //COLOR_REFLECTIVE
+    float spec_highlight = 100.0f; //SHININESS Ns
+    float optical_density = 1.0f; //REFRACTI Ni
+    float opacity = 1.0f; //OPACITY d
+};
+
 class Mesh {
 public:
     // mesh Data
     vector<Vertex> vertices;
     vector<uint32_t> indices;
     vector<Texture> textures;
+    Colour colour_data;
+    
     uint32_t VAO;
       
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Colour colour_data)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->colour_data = colour_data;
 
         setupMesh();
     }
@@ -69,6 +90,11 @@ public:
             // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
+
+        shader.SetVec3("diff_colour", this->colour_data.diffuse);
+        shader.SetVec3("spec_colour", this->colour_data.specular);
+        shader.SetVec3("ambient_colour", this->colour_data.ambient);
+        shader.SetFloat("opacity", this->colour_data.opacity);
 
         // draw mesh
         glBindVertexArray(VAO);
@@ -115,3 +141,4 @@ private:
         glBindVertexArray(0);
     }
 };
+#endif // !MESH_H

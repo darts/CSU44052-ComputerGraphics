@@ -1,0 +1,15 @@
+# Blender MTL File: 'Spider-Split.blend'
+# Material Count: 1
+
+newmtl Spider
+Ns 37.254902
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.400000 0.400000 0.400000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\haar_detail_NRM.jpg
+map_Kd D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\Spinnen_Bein_tex_2.jpg
+map_Ks D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\Spinnen_Bein_tex_2.jpg
