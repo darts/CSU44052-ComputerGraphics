@@ -65,8 +65,8 @@ public:
 		//float MiddleOffset_z = 4.5487f * ScaleFactor;
 		//float MiddleOffset_y = -1.6017f * ScaleFactor;
 		
-		float MiddleOffset_x = is_inverted ? -UpperOffset_self_x - MiddleOffset_self_x: (11.613f * scale_factor) - UpperOffset_x + MiddleOffset_self_x;
-		float MiddleOffset_z = is_inverted ? -UpperOffset_self_z + MiddleOffset_self_z -0.05: (17.54f * scale_factor) - UpperOffset_z + MiddleOffset_self_z;
+		float MiddleOffset_x = is_inverted ? -UpperOffset_self_x - MiddleOffset_self_x + 0.025: (11.613f * scale_factor) - UpperOffset_x + MiddleOffset_self_x;
+		float MiddleOffset_z = is_inverted ? -UpperOffset_self_z + MiddleOffset_self_z - 0.025: (17.54f * scale_factor) - UpperOffset_z + MiddleOffset_self_z;
 		float MiddleOffset_y = is_inverted ? UpperOffset_self_y + MiddleOffset_self_y - 0.02: (-0.16364f * scale_factor) - UpperOffset_y + MiddleOffset_self_y;
 
 		glm::mat4 MiddleModel = glm::mat4(1.0f); //multiply this with the parent matrix
@@ -90,9 +90,9 @@ public:
 		float LowerOffset_self_z = MiddleOffset_self_z;
 		float LowerOffset_self_y = MiddleOffset_self_y;
 
-		float LowerOffset_x = is_inverted ? -MiddleOffset_self_x * 1 : MiddleOffset_self_x * 0.95;
-		float LowerOffset_z = is_inverted ? MiddleOffset_self_z * 1 : MiddleOffset_self_z * 0.95;
-		float LowerOffset_y = is_inverted ? MiddleOffset_self_y * 1 : MiddleOffset_self_y * 0.95;
+		float LowerOffset_x = is_inverted ? -MiddleOffset_self_x * 0.95 : MiddleOffset_self_x * 0.95;
+		float LowerOffset_z = is_inverted ? MiddleOffset_self_z * 0.95 : MiddleOffset_self_z * 0.95;
+		float LowerOffset_y = is_inverted ? MiddleOffset_self_y * 0.95 : MiddleOffset_self_y * 0.95;
 
 		glm::mat4 LowerModel = glm::mat4(1.0f); //multiply this with the parent matrix
 
