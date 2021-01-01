@@ -9,6 +9,7 @@
 class Spider_tpl {
 public:
 	Spider_tpl() {
+		//body_mat = glm::rotate(body_mat, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 		this->init();
 	}
 	void Draw(Shader& shader) {
@@ -24,9 +25,18 @@ public:
 	}
 private:
 	void init() {
-		for (int i = 0; i < 8; i++) {
-			legs[i] = Leg_tpl(body_mat);
+		float one_offset = (float)atan(1) * 0.8f;
+
+		//right legs
+		for (int i = 0; i < 4; i++) {
+			legs[i] = Leg_tpl(body_mat, -(float)i * one_offset, glm::vec3(0.0f), false);
 		}
+
+		//left legs
+		for (int i = 0; i < 4; i++) {
+			legs[i+4] = Leg_tpl(body_mat, ((float)i * one_offset), glm::vec3(-0.4f, 0.0f, -0.6f), true);
+		}
+
 		body = Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_body.obj");
 		tail = Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_tail.obj");
 	}

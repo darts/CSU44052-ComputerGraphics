@@ -394,7 +394,7 @@ int main()
 		//model = glm::rotate(model, (float)atan(1) * 4, glm::vec3(1.0f, 0.0f, 0.0f));
 		lightingShader.SetMat4("model", model);
 		lightingShader.SetFloat("scale_factor", 1.0f);
-		//spoider.Draw(lightingShader); //---------------------useful
+		spoider.Draw(lightingShader); //---------------------useful
 		
 
 
