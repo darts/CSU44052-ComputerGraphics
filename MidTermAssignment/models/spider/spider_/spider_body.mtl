@@ -10,9 +10,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\haar_detail_NRM.jpg
-map_Kd D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\Spinnen_Bein_tex_2.jpg
-map_Ks D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\Spinnen_Bein_tex_2.jpg
+map_Bump textures\\haar_detail_NRM.jpg
+map_Kd textures\\Spinnen_Bein_tex_2.jpg
+map_Ks textures\\Spinnen_Bein_tex_2.jpg
 
 newmtl Spider_Eye
 Ns 849.285036
@@ -23,7 +23,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump -bm 0.500000 D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\haar_detail_NRM.jpg
+map_Bump -bm 0.500000 textures\\haar_detail_NRM.jpg
 
 newmtl Spider_teeth
 Ns 0.000000
@@ -34,4 +34,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Bump -bm 0.700000 D:\\Git-Some\\CSU44052-ComputerGraphics\\MidTermAssignment\\models\\spider\\textures\\haar_detail_NRM.jpg
+map_Bump -bm 0.700000 textures\\haar_detail_NRM.jpg

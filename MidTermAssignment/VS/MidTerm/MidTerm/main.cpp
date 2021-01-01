@@ -367,10 +367,35 @@ int main()
 			spider_boid.UpdateBoidsPos(time_diff);
 		//spider_boid.DrawBoids(the_shader); //---------------------useful
 
+
+
+
+
+		//old, working shader code------------------
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.05f));
 		the_shader.SetMat4("model", model);
-		lug.Draw(the_shader); //---------------------useful
+		//lug.Draw(the_shader);
+		///------------------------
+
+		//model = glm::mat4(1.0f);
+		//model = glm::scale(model, glm::vec3(0.01f));
+		//the_shader.SetMat4("model", model);
+		//lightingShader.SetFloat("scale_factor", 10.0f);
+		//lightingShader.SetMat4("projection", projection);
+		//lightingShader.SetMat4("view", view);
+		//model = glm::mat4(1.0f);
+		//model = glm::scale(model, glm::vec3(0.05f));
+		//lightingShader.SetMat4("model", model);
+
+		lightingShader.use();
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.05f));
+		lightingShader.SetMat4("model", model);
+		lightingShader.SetMat4("projection", projection);
+		lightingShader.SetMat4("view", view);
+		lightingShader.SetFloat("scale_factor", 10.0f);
+		lug.Draw(lightingShader); //---------------------useful
 
 		/*bag_shader.use();
 
@@ -395,8 +420,6 @@ int main()
 		lightingShader.SetMat4("model", model);
 		lightingShader.SetFloat("scale_factor", 1.0f);
 		spoider.Draw(lightingShader); //---------------------useful
-		
-
 
 
 		//update lighting
