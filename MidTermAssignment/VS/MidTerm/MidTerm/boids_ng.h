@@ -1,0 +1,133 @@
+#pragma once
+#include <boid_ng.h>
+#include <spider_tpl.h>
+
+constexpr int NUM_BOIDS_NG = 10;
+constexpr float LOCAL_RANGE = 10.0f;
+constexpr float TOO_CLOSE = 2.0f;
+constexpr int START_MAX = 15;
+constexpr int START_RANGE = START_MAX * 2;
+constexpr float MAX_X_NG = 20.0f;
+constexpr float MIN_X_NG = -MAX_X_NG;
+constexpr float MAX_Y_NG = 20.0f;
+constexpr float MIN_Y_NG = -MAX_Y_NG;
+
+class Boids_ng {
+public:
+	Boid_ng boids[NUM_BOIDS_NG];
+	Boid_ng boids_local[NUM_BOIDS_NG];
+	int num_local_boids;
+
+	Spider_tpl spiders[NUM_BOIDS_NG];
+
+	Boids_ng() {
+		init();
+	}
+
+	void DrawBoids(Shader the_shader) {
+		for (int i = 0; i < NUM_BOIDS_NG; i++) {
+			spiders[i].Draw(the_shader, boids[i].location, boids[i].vector);
+		}
+	}
+
+	void MoveBoids() {
+		for (int i = 0; i < NUM_BOIDS_NG; i++) {
+			updateCoherence(i);
+			updateSeparation(i);
+			updateAlignment(i);
+			updateStayInBox(i);
+
+			spiders[i].UpdateMovement(8);
+			boids[i].Walk();
+		}
+	}
+
+	void updateCoherence(int boid_index) {
+		int num_local = GetLocalBoids(boid_index);
+		num_local_boids = num_local;
+		glm::vec2 av_loc = getAverageLocation(num_local);
+		boids[boid_index].SteerTowardsLocation(av_loc);
+	}
+
+	void updateSeparation(int boid_index) {
+		float closest_dist = std::numeric_limits<float>::max();
+		int closest_index;
+		for (int i = 0; i < NUM_BOIDS_NG; i++) {
+			if (i != boid_index) {
+				float dist = GetDistanceBetweenBoids(boids[boid_index].location, boids[i].location);
+				if (dist < closest_dist) {
+					closest_dist = dist;
+					closest_index = i;
+				}
+			}
+		}
+
+		if (closest_dist < TOO_CLOSE) {
+			boids[boid_index].SteerAwayFromLocation(boids[closest_index].location);
+		}
+	}
+
+	void updateAlignment(int boid_index) {
+		glm::vec2 vector = glm::vec2(0.0f);
+		for (int i = 0; i < num_local_boids; i++) {
+			vector += boids_local[i].vector;
+		}
+		vector = glm::normalize(vector);
+
+		boids[boid_index].SteerTowardsVector(vector);
+	}
+
+	void updateStayInBox(int boid_index) {
+		if (outOfBounds(boids[boid_index].location))
+			boids[boid_index].SteerTowardsOrigin();
+	}
+
+	bool outOfBounds(glm::vec2 location) {
+		if (location.x > MAX_X_NG || location.x < MIN_X_NG || location.y > MAX_Y_NG || location.y < MIN_Y_NG) {
+			std::cout << location.x << " " << location.y << std::endl;
+			return true;
+		}
+		return false;
+	}
+
+	int GetLocalBoids(int boid_index) {
+		glm::vec2 location = boids[boid_index].location;
+		int boid_count = 0;
+		for (int i = 0; i < NUM_BOIDS_NG; i++) {
+			float dist = GetDistanceBetweenBoids(location, boids[i].location);
+			if (dist < LOCAL_RANGE) {
+				boids_local[boid_count++] = boids[i];
+			}
+		}
+		return boid_count;
+	}
+
+	float GetDistanceBetweenBoids(glm::vec2 boid_a, glm::vec2 boid_b) {
+		float a = boid_a.x - boid_b.x;
+		float b = boid_a.y - boid_b.y;
+		
+		return sqrt((a * a) + (b * b));
+	}
+
+	glm::vec2 getAverageLocation(int num_boids_in_locale) {
+		glm::vec2 average = boids_local[0].location;
+
+		for (int i = 1; i < num_boids_in_locale; i++) {
+			average += boids_local[i].location;
+		}
+
+		average.x /= num_boids_in_locale;
+		average.y /= num_boids_in_locale;
+
+		return average;
+	}
+
+private:
+	void init() {
+		for (int i = 0; i < NUM_BOIDS_NG; i++) {
+			glm::vec2 location = glm::vec2((rand() % START_RANGE) - START_MAX, (rand() % START_RANGE) - START_MAX);
+			glm::vec2 vector = glm::normalize(glm::vec2((rand() % START_RANGE) - START_MAX, (rand() % START_RANGE) - START_MAX));
+			boids[i] = Boid_ng(location, vector);
+		}
+	}
+};

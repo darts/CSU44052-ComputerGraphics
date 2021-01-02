@@ -1,6 +1,7 @@
 #pragma once
 
 #include <model.h>
+#define PI atan(1) * 4
 
 class Leg_tpl {
 public:
@@ -8,11 +9,12 @@ public:
 		//placeholder
 	}
 
-	Leg_tpl(glm::mat4 body_matrix, float initial_rotation, glm::vec3 initial_movement, bool is_inverted) {
+	Leg_tpl(glm::mat4 body_matrix, float initial_rotation, glm::vec3 initial_movement, bool is_inverted, float state_rot_offset) {
 		this->body_mat = body_matrix;
 		this->initial_rot_offset = initial_rotation;
 		this->initial_mov_offset = initial_movement;
 		this->is_inverted = is_inverted;
+		this->state_offset = state_rot_offset;
 		this->init();
 	}
 	void Draw(Shader& shader) {
@@ -21,8 +23,11 @@ public:
 		int inversion_rot_multiplier = inversion_multiplier;
 		float inversion_offset = is_inverted ? -0.5 : 0;
 		
-		inversion_rot_multiplier = 1;
-		inversion_offset = 0;
+		//inversion_rot_multiplier = 1;
+		//inversion_offset = 0;
+
+		float angular_offset = getAngularOffset();
+		float vertical_offset = getVerticalOffset();
 
 		//-----------------------------------------
 		float UpperOffset_self_x = is_inverted ? 4.0f * scale_factor : 7.974f * (scale_factor * 0.5);
@@ -40,7 +45,9 @@ public:
 		UpperModel = glm::translate(UpperModel, this->initial_mov_offset);
 		
 		UpperModel = glm::translate(UpperModel, glm::vec3(UpperOffset_self_x, UpperOffset_self_y, -UpperOffset_self_z));
+		UpperModel = glm::rotate(UpperModel, inversion_rot_multiplier * angular_offset, glm::vec3(0.0f, 1.0f, 0.0f));
 		UpperModel = glm::rotate(UpperModel, ((mov_offset + initial_rot_offset)), glm::vec3(0.0f, 1.0f, 0.0f));
+		UpperModel = glm::rotate(UpperModel, vertical_offset, glm::vec3(1.0f, 0.0f, 0.0f));
 		UpperModel = glm::translate(UpperModel, glm::vec3(-UpperOffset_self_x, -UpperOffset_self_y, UpperOffset_self_z));
 
 
@@ -72,7 +79,7 @@ public:
 		glm::mat4 MiddleModel = glm::mat4(1.0f); //multiply this with the parent matrix
 
 		MiddleModel = glm::translate(MiddleModel, glm::vec3(MiddleOffset_self_x, MiddleOffset_self_y, -MiddleOffset_self_z));
-		MiddleModel = glm::rotate(MiddleModel, (inversion_multiplier * (mov_offset * this->secondary_mov_ratio)) + inversion_offset, glm::vec3(0.0f, 1.0f, 0.0f));
+		MiddleModel = glm::rotate(MiddleModel, vertical_offset * this->secondary_mov_ratio, glm::vec3(1.0f, 0.0f, 0.0f));
 		MiddleModel = glm::translate(MiddleModel, glm::vec3(-MiddleOffset_self_x, -MiddleOffset_self_y, MiddleOffset_self_z));
 
 		MiddleModel = glm::translate(MiddleModel, glm::vec3(MiddleOffset_x, MiddleOffset_y, -MiddleOffset_z));
@@ -97,7 +104,7 @@ public:
 		glm::mat4 LowerModel = glm::mat4(1.0f); //multiply this with the parent matrix
 
 		LowerModel = glm::translate(LowerModel, glm::vec3(LowerOffset_self_x, LowerOffset_self_y, -LowerOffset_self_z));
-		LowerModel = glm::rotate(LowerModel, (inversion_multiplier * (mov_offset * this->secondary_mov_ratio)) + inversion_offset, glm::vec3(0.0f, 1.0f, 0.0f));
+		LowerModel = glm::rotate(LowerModel, vertical_offset * this->secondary_mov_ratio, glm::vec3(1.0f, 0.0f, 0.0f));
 		LowerModel = glm::translate(LowerModel, glm::vec3(-LowerOffset_self_x, -LowerOffset_self_y, LowerOffset_self_z));
 
 		LowerModel = glm::translate(LowerModel, glm::vec3(LowerOffset_x, LowerOffset_y, -LowerOffset_z));
@@ -115,6 +122,10 @@ public:
 		this->body_mat = mat;
 	}
 
+	void UpdateLoc(float increment_amount) {
+		this->movement_state += increment_amount;
+	}
+
 private:
 	void init() {
 		this->leg_upper = is_inverted ? Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_leg_upper_flip.obj") : Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_leg_upper.obj");
@@ -123,15 +134,42 @@ private:
 	}
 
 	float getLocOffset() {
+
 		return 0.0f;
+	}
+
+	float getAngularOffset() {
+		float current_state = convertDegToRad(convertStateToCircular());
+		float current_angular_state = cos(current_state);
+		return current_angular_state * mov_range_deg;
+	}
+
+	float getVerticalOffset() {
+		float current_state = convertDegToRad(convertStateToCircular());
+		float current_angular_state = sin(current_state + PI);
+		if (current_angular_state < 0)
+			current_angular_state = 0;
+		return current_angular_state * mov_range_deg;
+	}
+
+	float convertDegToRad(float deg) {
+		return (deg / 180) * PI;
+	}
+
+	float convertStateToCircular() {
+		return fmod(movement_state + state_offset, 360.0f);
 	}
 
 	Model leg_upper, leg_middle, leg_lower;
 	glm::mat4 body_mat;
 	float movement_state = 0;
+	float state_offset;
 	float scale_factor = 0.05f;
-	float secondary_mov_ratio = 0.3f;
+	float secondary_mov_ratio = 1.4f;
 	float initial_rot_offset;
 	glm::vec3 initial_mov_offset;
 	bool is_inverted;
+
+	float mov_range = 60;
+	float mov_range_deg = mov_range / 360;
 };

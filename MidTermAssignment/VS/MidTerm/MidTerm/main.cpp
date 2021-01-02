@@ -13,6 +13,8 @@
 #include <boids.h>
 #include <spider_tpl.h>
 
+#include <boids_ng.h>
+
 #pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
 
 #define NUM_SPIDERS 10
@@ -248,6 +250,7 @@ int main()
 	stbi_set_flip_vertically_on_load(false);
 	Model spoider("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider.obj");
 
+	Boids_ng boids_ng;
 
 
 	//consider depth when rendering
@@ -315,7 +318,7 @@ int main()
 		//the_spider.Draw(lightingShader);
 		ourModel.Draw(lightingShader); //---------------------useful
 
-		//the_ground.Draw(lightingShader); //---------------------useful
+		the_ground.Draw(lightingShader); //---------------------useful
 
 		//the_spider.Draw(lightingShader);
 		
@@ -363,8 +366,11 @@ int main()
 			spider_arr[i].Draw(the_shader);
 		}*/
 
-		if(boid_walk)
+		if (boid_walk) {
+			boids_ng.MoveBoids();
+			lug.UpdateMovement(2);
 			spider_boid.UpdateBoidsPos(time_diff);
+		}
 		//spider_boid.DrawBoids(the_shader); //---------------------useful
 
 
@@ -375,7 +381,7 @@ int main()
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.05f));
 		the_shader.SetMat4("model", model);
-		//lug.Draw(the_shader);
+		//lug.Draw(the_shader);  
 		///------------------------
 
 		//model = glm::mat4(1.0f);
@@ -395,7 +401,10 @@ int main()
 		lightingShader.SetMat4("projection", projection);
 		lightingShader.SetMat4("view", view);
 		lightingShader.SetFloat("scale_factor", 10.0f);
-		lug.Draw(lightingShader); //---------------------useful
+		//lug.Draw(lightingShader); //---------------------useful
+
+
+		boids_ng.DrawBoids(lightingShader);
 
 		/*bag_shader.use();
 
