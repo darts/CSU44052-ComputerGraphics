@@ -1,12 +1,14 @@
 #pragma once
+#define DEBUG_BOID_NG false
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-constexpr float SCALE_FACTOR = 4.0f;
+constexpr float SCALE_FACTOR = 7.0f;
 constexpr float COHERENCE_FACTOR = 0.1f / SCALE_FACTOR;
 constexpr float SEPARATION_FACTOR = 0.2f / SCALE_FACTOR;
 constexpr float ALIGNMENT_FACTOR = 0.06f / SCALE_FACTOR;
-constexpr float RTB_FACTOR = 2.0f / SCALE_FACTOR;
+constexpr float RTB_FACTOR = 0.2f / SCALE_FACTOR;
 constexpr float SPEED_SCALE = 0.04f;
 
 class Boid_ng {
@@ -33,8 +35,8 @@ public:
 	//updates vector to aim for a target location
 	void SteerTowardsLocation(glm::vec2 target_loc) {
 		glm::vec2 ideal_vector = glm::vec2(target_loc.x - location.x, target_loc.y - location.y);
+		glm::vec2 tmp_vec = ideal_vector;
 		ideal_vector = glm::normalize(ideal_vector);
-
 		steerTowardsVector(ideal_vector, COHERENCE_FACTOR);
 	}
 
@@ -59,6 +61,8 @@ public:
 
 private:
 	void steerTowardsVector(glm::vec2 target_vector, float steer_factor) {
+		return steerTowardsVector2(target_vector, steer_factor);
+
 		if (target_vector.x > vector.x)
 			vector.x += steer_factor;
 		else
@@ -69,6 +73,48 @@ private:
 		else
 			vector.y -= steer_factor;
 
+		vector = glm::normalize(vector);
+	}
+
+	void steerTowardsVector2(glm::vec2 target_vector, float steer_factor) {
+		float target_vector_angle = atan2f(target_vector.x, target_vector.y);
+		if (isnan(target_vector_angle))
+			std::cout << endl;
+		float current_vector_angle = atan2f(vector.x, vector.y);
+
+#if DEBUG_BOID_NG
+		std::cout << target_vector_angle << " " << current_vector_angle << " ";
+#endif
+
+		if (target_vector_angle < 0)
+			target_vector_angle = target_vector_angle + (2 * PI);
+		if (current_vector_angle < 0)
+			current_vector_angle = current_vector_angle + (2 * PI);
+
+		if (abs(target_vector_angle - current_vector_angle) > PI) {
+			if (target_vector_angle > current_vector_angle) {
+				current_vector_angle -= min((float)(((2 * PI) - target_vector_angle) + current_vector_angle), steer_factor);
+			}
+			else {
+				current_vector_angle += min((float)(((2 * PI) - current_vector_angle) + target_vector_angle), steer_factor);
+			}
+		}
+		else {
+			if (target_vector_angle > current_vector_angle) {
+				current_vector_angle += min(target_vector_angle - current_vector_angle, steer_factor);
+			}
+			else {
+				current_vector_angle -= min(current_vector_angle - target_vector_angle, steer_factor);
+			}
+		}
+#if DEBUG_BOID_NG
+		std::cout << current_vector_angle << std::endl;
+#endif
+
+		vector = glm::vec2(sin(current_vector_angle), cos(current_vector_angle));
+
+		if (isnan(vector.x) || isnan(vector.y))
+			std::cout << endl;
 		vector = glm::normalize(vector);
 	}
 };

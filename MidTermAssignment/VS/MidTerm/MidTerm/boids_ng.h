@@ -1,10 +1,12 @@
 #pragma once
+#define DEBUG_BOIDS_NG false
+
 #include <boid_ng.h>
 #include <spider_tpl.h>
 
-constexpr int NUM_BOIDS_NG = 10;
+constexpr int NUM_BOIDS_NG = 20;
 constexpr float LOCAL_RANGE = 10.0f;
-constexpr float TOO_CLOSE = 2.0f;
+constexpr float TOO_CLOSE = 4.0f;
 constexpr int START_MAX = 15;
 constexpr int START_RANGE = START_MAX * 2;
 constexpr float MAX_X_NG = 20.0f;
@@ -32,10 +34,11 @@ public:
 
 	void MoveBoids() {
 		for (int i = 0; i < NUM_BOIDS_NG; i++) {
-			updateCoherence(i);
-			updateSeparation(i);
-			updateAlignment(i);
-			updateStayInBox(i);
+			if (!updateStayInBox(i)) {
+				updateCoherence(i);
+				updateSeparation(i);
+				updateAlignment(i);
+			}
 
 			spiders[i].UpdateMovement(8);
 			boids[i].Walk();
@@ -44,9 +47,11 @@ public:
 
 	void updateCoherence(int boid_index) {
 		int num_local = GetLocalBoids(boid_index);
-		num_local_boids = num_local;
-		glm::vec2 av_loc = getAverageLocation(num_local);
-		boids[boid_index].SteerTowardsLocation(av_loc);
+		if (num_local > 1) {
+			num_local_boids = num_local;
+			glm::vec2 av_loc = getAverageLocation(num_local);
+			boids[boid_index].SteerTowardsLocation(av_loc);
+		}
 	}
 
 	void updateSeparation(int boid_index) {
@@ -77,14 +82,19 @@ public:
 		boids[boid_index].SteerTowardsVector(vector);
 	}
 
-	void updateStayInBox(int boid_index) {
-		if (outOfBounds(boids[boid_index].location))
+	bool updateStayInBox(int boid_index) {
+		if (outOfBounds(boids[boid_index].location)) {
 			boids[boid_index].SteerTowardsOrigin();
+			return true;
+		}
+		return false;
 	}
 
 	bool outOfBounds(glm::vec2 location) {
 		if (location.x > MAX_X_NG || location.x < MIN_X_NG || location.y > MAX_Y_NG || location.y < MIN_Y_NG) {
+#if DEBUG_BOIDS_NG
 			std::cout << location.x << " " << location.y << std::endl;
+#endif
 			return true;
 		}
 		return false;
@@ -105,7 +115,7 @@ public:
 	float GetDistanceBetweenBoids(glm::vec2 boid_a, glm::vec2 boid_b) {
 		float a = boid_a.x - boid_b.x;
 		float b = boid_a.y - boid_b.y;
-		
+
 		return sqrt((a * a) + (b * b));
 	}
 
