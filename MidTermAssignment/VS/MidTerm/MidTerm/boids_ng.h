@@ -60,20 +60,6 @@ public:
 		return boid_count;
 	}
 
-	
-
-	glm::vec2 getAverageLocation(int num_boids_in_locale) {
-		glm::vec2 average = boids_local[0].location;
-
-		for (int i = 1; i < num_boids_in_locale; i++) {
-			average += boids_local[i].location;
-		}
-
-		average.x /= num_boids_in_locale;
-		average.y /= num_boids_in_locale;
-
-		return average;
-	}
 
 private:
 	void init() {
@@ -140,10 +126,20 @@ private:
 	}
 
 	float getDistanceBetweenBoids(glm::vec2 boid_a, glm::vec2 boid_b) {
-		float a = boid_a.x - boid_b.x;
-		float b = boid_a.y - boid_b.y;
+		return glm::distance(boid_a, boid_b);
+	}
 
-		return sqrt((a * a) + (b * b));
+	glm::vec2 getAverageLocation(int num_boids_in_locale) {
+		glm::vec2 average = boids_local[0].location;
+
+		for (int i = 1; i < num_boids_in_locale; i++) {
+			average += boids_local[i].location;
+		}
+
+		average.x /= num_boids_in_locale;
+		average.y /= num_boids_in_locale;
+
+		return average;
 	}
 
 	void updatePlayerCollision(glm::vec2 player_pos, int boid_index, bool check_collision) {
