@@ -200,8 +200,8 @@ int main()
 	// directional light
 	lightingShader.SetVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
 	lightingShader.SetVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	lightingShader.SetVec3("dirLight.diffuse", glm::vec3(1.4f, 1.4f, 1.4f));
-	lightingShader.SetVec3("dirLight.specular", glm::vec3(1.5f, 1.5f, 1.5f));
+	lightingShader.SetVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+	lightingShader.SetVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	// point light 1
 	lightingShader.SetVec3("pointLights[0].position", pointLightPositions[0]);
 	lightingShader.SetVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
@@ -338,7 +338,7 @@ int main()
 		//the_spider.Draw(lightingShader);
 		//ourModel.Draw(lightingShader); //---------------------useful
 
-		the_ground.Draw(lightingShader); //---------------------useful
+		
 
 		//the_spider.Draw(lightingShader);
 		
@@ -413,6 +413,14 @@ int main()
 		//model = glm::mat4(1.0f);
 		//model = glm::scale(model, glm::vec3(0.05f));
 		//lightingShader.SetMat4("model", model);
+		lightingShader.use();
+
+		lightingShader.SetMat4("projection", projection);
+		lightingShader.SetMat4("view", view);
+		lightingShader.SetFloat("scale_factor", 1.0f);
+		the_ground.Draw(lightingShader);
+
+
 
 		lightingShader.use();
 		model = glm::mat4(1.0f);
@@ -426,6 +434,8 @@ int main()
 
 		boids_ng.DrawBoids(lightingShader);
 
+		
+
 		/*bag_shader.use();
 
 		model = glm::mat4(1.0f);
@@ -438,18 +448,9 @@ int main()
 		//the_ground.Draw(bag_shader);
 		
 
-		lightingShader.use();
-		lightingShader.SetMat4("projection", projection);
-		lightingShader.SetMat4("view", view);
+		
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.10f, 0.10f, 0.10f));
-		//model = glm::rotate(model, (float)atan(1) * 4, glm::vec3(1.0f, 0.0f, 0.0f));
-		lightingShader.SetMat4("model", model);
-		lightingShader.SetFloat("scale_factor", 1.0f);
-		spoider.Draw(lightingShader); //---------------------useful
-
+		
 
 		//update lighting
 		if (l_dir) {
@@ -514,7 +515,17 @@ int main()
 		skybox.Draw(camera, skyboxShader, projection);
 
 		
+		lightingShader.use();
+		lightingShader.SetMat4("projection", projection);
+		lightingShader.SetMat4("view", view);
 
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.10f, 0.10f, 0.10f));
+		//model = glm::rotate(model, (float)atan(1) * 4, glm::vec3(1.0f, 0.0f, 0.0f));
+		lightingShader.SetMat4("model", model);
+		lightingShader.SetFloat("scale_factor", 1.0f);
+		spoider.Draw(lightingShader); //---------------------useful
 		
 		
 
