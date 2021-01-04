@@ -5,8 +5,8 @@
 #include <spider_tpl.h>
 
 constexpr int NUM_BOIDS_NG = 20;
-constexpr float LOCAL_RANGE = 10.0f;
-constexpr float TOO_CLOSE = 4.0f;
+constexpr float LOCAL_RANGE = 13.0f;
+constexpr float TOO_CLOSE = 6.0f;
 constexpr int START_MAX = 15;
 constexpr int START_RANGE = START_MAX * 2;
 constexpr float MAX_X_NG = 20.0f;
@@ -32,7 +32,7 @@ public:
 		}
 	}
 
-	void MoveBoids() {
+	void MoveBoids(glm::vec2 player_pos, glm::vec2 player_vec) {
 		for (int i = 0; i < NUM_BOIDS_NG; i++) {
 			if (!updateStayInBox(i)) {
 				updateCoherence(i);

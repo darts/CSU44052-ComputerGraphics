@@ -5,8 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <shader.h>
 #include <camera.h>
+#include <shader.h>
 #include <model.h>
 #include <Spider.h>
 #include <ground.h>
@@ -14,6 +14,8 @@
 #include <spider_tpl.h>
 
 #include <boids_ng.h>
+
+#include <skybox.h>
 
 #pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
 
@@ -169,6 +171,13 @@ int main()
 
 	Model dir_light = Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/light_cube/light_not_cube.obj");
 
+	//Model skybox = Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/skybox_/source/SkyPano_Milkyway.fbx");
+	//Shader skyboxShader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/skybox.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/skybox.fs");
+	Skybox skybox = Skybox();
+	Shader skyboxShader("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/skybox-1.vs", "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/shaders/skybox-1.fs");
+
+
+
 	Model lights[4] = {
 		Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/light_cube/light_cube.obj"),
 		Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/light_cube/light_cube.obj"),
@@ -292,6 +301,18 @@ int main()
 		//lightingShader.SetMat4("projection", projection);
 		//lightingShader.SetMat4("view", view);
 
+
+
+
+
+
+	
+
+
+
+
+
+
 		//lightingShader.SetFloat("scale_factor", 10.0f); //adjust object scaling
 
 
@@ -316,7 +337,7 @@ int main()
 		lightingShader.SetFloat("scale_factor", 1.0f);
 		
 		//the_spider.Draw(lightingShader);
-		ourModel.Draw(lightingShader); //---------------------useful
+		//ourModel.Draw(lightingShader); //---------------------useful
 
 		the_ground.Draw(lightingShader); //---------------------useful
 
@@ -367,9 +388,9 @@ int main()
 		}*/
 
 		if (boid_walk) {
-			boids_ng.MoveBoids();
+			//boids_ng.MoveBoids();
 			lug.UpdateMovement(2);
-			spider_boid.UpdateBoidsPos(time_diff);
+			//spider_boid.UpdateBoidsPos(time_diff);
 		}
 		//spider_boid.DrawBoids(the_shader); //---------------------useful
 
@@ -488,6 +509,15 @@ int main()
 			lightingShader.SetVec3("spotLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
 			lightingShader.SetVec3("spotLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 		}
+
+
+
+		skybox.Draw(camera, skyboxShader, projection);
+
+		
+
+		
+		
 
 
 		glfwSwapBuffers(window);
