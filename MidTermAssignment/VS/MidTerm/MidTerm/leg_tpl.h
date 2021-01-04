@@ -1,7 +1,7 @@
 #pragma once
 
 #include <model.h>
-#define PI atan(1) * 4
+#define PI 3.141592653589793238462643383279
 
 class Leg_tpl {
 public:

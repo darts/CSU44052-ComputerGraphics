@@ -388,7 +388,7 @@ int main()
 		}*/
 
 		if (boid_walk) {
-			//boids_ng.MoveBoids();
+			boids_ng.MoveBoids(glm::vec2(1.0f), glm::vec2(1.0f));
 			lug.UpdateMovement(2);
 			//spider_boid.UpdateBoidsPos(time_diff);
 		}
