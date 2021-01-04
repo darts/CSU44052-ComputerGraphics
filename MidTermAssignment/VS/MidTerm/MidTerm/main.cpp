@@ -25,7 +25,7 @@
 const unsigned int WIN_WIDTH = 1600 / 1.2;
 const unsigned int WIN_HEIGHT = 1200 / 1.2;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f)); //start the camera back a bit so it doesn't end up inside the model
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 float previous_mouse_x_pos = WIN_WIDTH / 2.0f; 
 float previous_mouse_y_pos = WIN_HEIGHT / 2.0f;
 bool first_mouse_callback = true;
@@ -41,11 +41,17 @@ float spider_mov_delay_arr[NUM_SPIDERS];
 
 bool l_dir = true, l_spot = true, l_point = true;
 bool boid_walk = true;
+bool allow_camera_vertical = true;
 
 //callback for resizing window
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) 
 {
 	glViewport(0, 0, width, height);
+}
+
+void ToggleCameraFirstPerson() {
+	allow_camera_vertical = !allow_camera_vertical;
+	camera.ToggleCameraVertical();
 }
 
 void KeyPressHandler(GLFWwindow* window)
@@ -85,6 +91,8 @@ void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int
 		l_point = !l_point;
 	if (key == GLFW_KEY_V)
 		boid_walk = !boid_walk;
+	if (key == GLFW_KEY_F)
+		ToggleCameraFirstPerson();
 }
 
 void MouseMoveCallback(GLFWwindow* window, double mouse_x_pos, double mouse_y_pos)
@@ -110,15 +118,6 @@ void MouseScrollCallback(GLFWwindow* window, double scroll_x, double scroll_y)
 {
 	camera.HandleMouseScroll((float)scroll_y);
 }
-
-//void MovSpiderArr() {
-//	for (int i = 0; i < NUM_SPIDERS; i++) {
-//		spider_arr[i].HandleKeyPress(Spider::Spider_Directions::FORWARDS, time_diff / 2);
-//	}
-//}
-
-
-
 
 int main()
 {
@@ -388,7 +387,7 @@ int main()
 		}*/
 
 		if (boid_walk) {
-			boids_ng.MoveBoids(glm::vec2(1.0f), glm::vec2(1.0f));
+			boids_ng.MoveBoids(glm::vec2(camera.camera_position.x, camera.camera_position.z), !allow_camera_vertical);
 			lug.UpdateMovement(2);
 			//spider_boid.UpdateBoidsPos(time_diff);
 		}

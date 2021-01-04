@@ -17,7 +17,7 @@ public:
 		this->state_offset = state_rot_offset;
 		this->init();
 	}
-	void Draw(Shader& shader) {
+	void Draw(Shader& shader, bool custom_colour = false, glm::vec3 diff_colour = glm::vec3(0.0f)) {
 		float mov_offset = getLocOffset();
 		int inversion_multiplier = is_inverted ? -1 : 1;
 		int inversion_rot_multiplier = inversion_multiplier;
@@ -60,7 +60,7 @@ public:
 
 		shader.SetMat4("model", glm::scale(UpperModel, glm::vec3(scale_factor)));
 
-		this->leg_upper.Draw(shader);
+		this->leg_upper.Draw(shader, custom_colour, diff_colour);
 		//-----------------------------------------
 
 		//-----------------------------------------
@@ -89,7 +89,7 @@ public:
 
 		shader.SetMat4("model", glm::scale(MiddleModel, glm::vec3(scale_factor)));
 
-		this->leg_middle.Draw(shader);
+		this->leg_middle.Draw(shader, custom_colour, diff_colour);
 		//-----------------------------------------
 
 		//-----------------------------------------
@@ -114,7 +114,7 @@ public:
 
 		shader.SetMat4("model", glm::scale(LowerModel, glm::vec3(scale_factor)));
 
-		this->leg_lower.Draw(shader);
+		this->leg_lower.Draw(shader, custom_colour, diff_colour);
 		//-----------------------------------------
 	}
 

@@ -6,6 +6,7 @@
 #include <model.h>
 #include <leg_tpl.h>
 
+
 class Spider_tpl {
 public:
 	Spider_tpl() {
@@ -21,26 +22,31 @@ public:
 		body_mat = glm::rotate(body_mat, (float)(angle - PI), glm::vec3(0.0f, 1.0f, 0.0f));
 		for (int i = 0; i < 8; i++) {
 			legs[i].ParentUpdate(body_mat);
-			legs[i].Draw(shader);
+			legs[i].Draw(shader, colour_on_next_draw, next_colour);
 		}
 
 		glm::mat4 model = body_mat;
 		model = glm::scale(model, glm::vec3(0.05f));
 		shader.SetMat4("model", model);
-		body.Draw(shader);
-		tail.Draw(shader);
+		body.Draw(shader, colour_on_next_draw, next_colour);
+		tail.Draw(shader, colour_on_next_draw, next_colour);
 
+	}
+
+	void SetNextDrawCycleColour(bool colour, glm::vec3 rgb) {
+		colour_on_next_draw = colour;
+		next_colour = rgb;
 	}
 
 	void Draw(Shader& shader) {
 		for (int i = 0; i < 8; i++) {
-			legs[i].Draw(shader);
+			legs[i].Draw(shader, colour_on_next_draw, next_colour);
 		}
 		glm::mat4 model = body_mat;
 		model = glm::scale(model, glm::vec3(0.05f));
 		shader.SetMat4("model", model);
-		body.Draw(shader);
-		tail.Draw(shader);
+		body.Draw(shader, colour_on_next_draw, next_colour);
+		tail.Draw(shader, colour_on_next_draw, next_colour);
 	}
 	void UpdateMovement(float update_amount) {
 		for (int i = 0; i < 8; i++) {
@@ -48,6 +54,9 @@ public:
 		}
 	}
 private:
+	bool colour_on_next_draw = false;
+	glm::vec3 next_colour = glm::vec3(0.0f);
+
 	void init() {
 		float one_offset = (float)atan(1) * 0.8f;
 

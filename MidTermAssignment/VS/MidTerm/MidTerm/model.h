@@ -41,10 +41,10 @@ public:
         loadModel(path);
     }
       
-    void Draw(Shader& shader)
+    void Draw(Shader& shader, bool custom_colour = false, glm::vec3 diff_colour = glm::vec3(0.0f))
     {
         for (unsigned int i = 0; i < model_meshes.size(); i++)
-            model_meshes[i].Draw(shader);
+            model_meshes[i].Draw(shader, custom_colour, diff_colour);
     }
 
 private:

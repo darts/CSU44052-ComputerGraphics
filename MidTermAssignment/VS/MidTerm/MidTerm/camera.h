@@ -19,6 +19,9 @@ public:
     const float MAX_ZOOM = 1.0f;
     const float MIN_ZOOM = 50.0f;
 
+    bool allow_vertical_movement;
+    float start_vertical;
+
     //positional information
     glm::vec3 camera_position; //this can be edited on instantiation
     //Since we are using a right hand coordinate system:
@@ -36,10 +39,23 @@ public:
     float camera_zoom = MIN_ZOOM;
 
     // constructor with vectors
-    Camera(glm::vec3 starting_position = glm::vec3(0.0f))
+    Camera(glm::vec3 starting_position = glm::vec3(0.0f), bool allow_vertical = true)
     {
+        allow_vertical_movement = allow_vertical;
         camera_position = starting_position;
         updateCameraVectors();
+    }
+
+    void ToggleCameraVertical() {
+        allow_vertical_movement = !allow_vertical_movement;
+
+        z_axis_vector = glm::vec3(0.0f, 0.0f, -1.0f);
+        global_vertical = glm::vec3(0.0f, 1.0f, 0.0f);
+        camera_yaw = -90.0f;
+        camera_pitch = 0.0f;
+
+        camera_position = default_fpv_position;
+        start_vertical = camera_position.y;
     }
 
     //generate the view matrix using glm lookAt()
@@ -63,6 +79,9 @@ public:
             camera_position -= x_axis_vector * normalised_speed;
         if (direction == Camera_Directions::RIGHT)
             camera_position += x_axis_vector * normalised_speed;
+
+        if (!allow_vertical_movement)
+            camera_position.y = start_vertical;
     }
 
     //handle mouse movement
@@ -85,6 +104,8 @@ public:
     }
 
 private:
+    glm::vec3 default_fpv_position = glm::vec3(0.0f, -0.5f, 0.5f);
+
     //update the direction vectors
     void updateCameraVectors()
     {

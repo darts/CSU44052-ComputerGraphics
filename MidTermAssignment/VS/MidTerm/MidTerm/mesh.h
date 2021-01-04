@@ -62,14 +62,13 @@ public:
     }
 
     //render the mesh
-    void Draw(Shader& shader)
+    void Draw(Shader& shader, bool custom_colour = false, glm::vec3 diff_colour = glm::vec3(0.0f))
     {
         // bind appropriate textures
         unsigned int diffuseNr = 1;
         unsigned int specularNr = 1;
         unsigned int normalNr = 1;
         unsigned int heightNr = 1;
-
         for (unsigned int i = 0; i < textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
@@ -92,6 +91,8 @@ public:
         }
 
         shader.SetVec3("diff_colour", this->colour_data.diffuse);
+        if(custom_colour)
+            shader.SetVec3("diff_colour", diff_colour);
         shader.SetVec3("spec_colour", this->colour_data.specular);
         shader.SetVec3("ambient_colour", this->colour_data.ambient);
         shader.SetFloat("opacity", this->colour_data.opacity);
