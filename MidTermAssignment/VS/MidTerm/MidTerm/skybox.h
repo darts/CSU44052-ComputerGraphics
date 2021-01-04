@@ -71,12 +71,12 @@ public:
 
         std::vector<std::string> faces
         {
-            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/right.jpg",
-            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/left.jpg",
+            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/left.png",
+            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/right.png",
             "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/top.jpg",
-            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/bottom.jpg",
-            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/back.jpg",
-            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/front.jpg"
+            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/bottom.png",
+            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/back.png",
+            "D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/skybox/textures/front.png"
         };
         cubemapTexture = loadCubemap(faces);
     }
