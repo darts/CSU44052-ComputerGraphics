@@ -30,13 +30,13 @@ public:
 		float vertical_offset = getVerticalOffset();
 
 		//-----------------------------------------
-		float UpperOffset_self_x = is_inverted ? 4.0f * scale_factor : 7.974f * (scale_factor * 0.5);
-		float UpperOffset_self_z = is_inverted ? -6.0f * scale_factor : 12.112f * (scale_factor * 0.5);
-		float UpperOffset_self_y = is_inverted ? 2.0f * scale_factor : -1.6995f * (scale_factor * 0.5);
+		float UpperOffset_self_x = is_inverted ? 4.0f * offset_factor : 7.974f * (offset_factor * 0.5);
+		float UpperOffset_self_z = is_inverted ? -6.0f * offset_factor : 12.112f * (offset_factor * 0.5);
+		float UpperOffset_self_y = is_inverted ? 2.0f * offset_factor : -1.6995f * (offset_factor * 0.5);
 
-		float UpperOffset_x = inversion_multiplier * 7.974f * scale_factor;
-		float UpperOffset_z = inversion_multiplier * 12.112f * scale_factor;
-		float UpperOffset_y = inversion_multiplier * -1.6995f * scale_factor;
+		float UpperOffset_x = inversion_multiplier * 7.974f * offset_factor;
+		float UpperOffset_z = inversion_multiplier * 12.112f * offset_factor;
+		float UpperOffset_y = inversion_multiplier * -1.6995f * offset_factor;
 
 		//UpperOffset_y = 0.0f;
 		//UpperOffset_z = 0.0f;
@@ -64,17 +64,17 @@ public:
 		//-----------------------------------------
 
 		//-----------------------------------------
-		float MiddleOffset_self_x = 1.5071f * scale_factor;
-		float MiddleOffset_self_z = 4.6712f * scale_factor;
-		float MiddleOffset_self_y = -1.6758f * scale_factor;
+		float MiddleOffset_self_x = 1.5071f * offset_factor;
+		float MiddleOffset_self_z = 4.6712f * offset_factor;
+		float MiddleOffset_self_y = -1.6758f * offset_factor;
 
 		//float MiddleOffset_x = 1.7188f * ScaleFactor;
 		//float MiddleOffset_z = 4.5487f * ScaleFactor;
 		//float MiddleOffset_y = -1.6017f * ScaleFactor;
 		
-		float MiddleOffset_x = is_inverted ? -UpperOffset_self_x - MiddleOffset_self_x + 0.025: (11.613f * scale_factor) - UpperOffset_x + MiddleOffset_self_x;
-		float MiddleOffset_z = is_inverted ? -UpperOffset_self_z + MiddleOffset_self_z - 0.025: (17.54f * scale_factor) - UpperOffset_z + MiddleOffset_self_z;
-		float MiddleOffset_y = is_inverted ? UpperOffset_self_y + MiddleOffset_self_y - 0.02: (-0.16364f * scale_factor) - UpperOffset_y + MiddleOffset_self_y;
+		float MiddleOffset_x = is_inverted ? -UpperOffset_self_x - MiddleOffset_self_x + 0.025: (11.613f * offset_factor) - UpperOffset_x + MiddleOffset_self_x;
+		float MiddleOffset_z = is_inverted ? -UpperOffset_self_z + MiddleOffset_self_z - 0.025: (17.54f * offset_factor) - UpperOffset_z + MiddleOffset_self_z;
+		float MiddleOffset_y = is_inverted ? UpperOffset_self_y + MiddleOffset_self_y - 0.02: (-0.16364f * offset_factor) - UpperOffset_y + MiddleOffset_self_y;
 
 		glm::mat4 MiddleModel = glm::mat4(1.0f); //multiply this with the parent matrix
 
@@ -126,6 +126,24 @@ public:
 		this->movement_state += increment_amount;
 	}
 
+	void SetDiff(glm::vec3 diffuse) {
+		leg_upper.SetDiff(diffuse);
+		leg_middle.SetDiff(diffuse);
+		leg_lower.SetDiff(diffuse);
+	}
+
+	void SetAmbient(glm::vec3 ambient) {
+		leg_upper.SetAmbient(ambient);
+		leg_middle.SetAmbient(ambient);
+		leg_lower.SetAmbient(ambient);
+	}
+
+	void SetSpec(glm::vec3 specular) {
+		leg_upper.SetSpec(specular);
+		leg_middle.SetSpec(specular);
+		leg_lower.SetSpec(specular);
+	}
+
 private:
 	void init() {
 		this->leg_upper = is_inverted ? Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_leg_upper_flip.obj") : Model("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/spider/spider_/spider_leg_upper.obj");
@@ -164,7 +182,8 @@ private:
 	glm::mat4 body_mat;
 	float movement_state = 0;
 	float state_offset;
-	float scale_factor = 0.05f;
+	float scale_factor = 0.005f;
+	float offset_factor = 0.05f;
 	float secondary_mov_ratio = 1.4f;
 	float initial_rot_offset;
 	glm::vec3 initial_mov_offset;

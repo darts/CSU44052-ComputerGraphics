@@ -19,8 +19,6 @@
 
 #pragma warning (disable: 4244) //get the compiler to shut up about converting doubles to floats
 
-#define NUM_SPIDERS 10
-
 //default window dimensions
 const unsigned int WIN_WIDTH = 1600 / 1.2;
 const unsigned int WIN_HEIGHT = 1200 / 1.2;
@@ -33,11 +31,6 @@ bool first_mouse_callback = true;
 // timing
 float time_diff = 0.0f;	// time between current frame and last frame
 float previous_frame = 0.0f;
-
-Spider the_spider;
-//Spider spider_arr[NUM_SPIDERS];
-float spider_mov_delay_arr[NUM_SPIDERS];
-//Boids spider_boid();
 
 bool l_dir = true, l_spot = true, l_point = true;
 bool boid_walk = true;
@@ -61,23 +54,13 @@ void KeyPressHandler(GLFWwindow* window)
 
 	//camera
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.HandleKeyPress(Camera::Camera_Directions::FORWARDS, time_diff);
+		camera.HandleKeyPress(Camera::Camera_Directions::FORWARDS, time_diff * (allow_camera_vertical ? 1 : 0.2));
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.HandleKeyPress(Camera::Camera_Directions::BACKWARDS, time_diff);
+		camera.HandleKeyPress(Camera::Camera_Directions::BACKWARDS, time_diff * (allow_camera_vertical ? 1 : 0.2));
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.HandleKeyPress(Camera::Camera_Directions::LEFT, time_diff);
+		camera.HandleKeyPress(Camera::Camera_Directions::LEFT, time_diff * (allow_camera_vertical ? 1 : 0.2));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.HandleKeyPress(Camera::Camera_Directions::RIGHT, time_diff);
-
-	//spider
-	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-		the_spider.HandleKeyPress(Spider::Spider_Directions::FORWARDS, time_diff);
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		the_spider.HandleKeyPress(Spider::Spider_Directions::BACKWARDS, time_diff);
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		the_spider.HandleKeyPress(Spider::Spider_Directions::LEFT, time_diff);
-	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		the_spider.HandleKeyPress(Spider::Spider_Directions::RIGHT, time_diff);
+		camera.HandleKeyPress(Camera::Camera_Directions::RIGHT, time_diff * (allow_camera_vertical ? 1 : 0.2));
 }
 
 void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -159,8 +142,6 @@ int main()
 	Model ourModel("D:/Git-Some/CSU44052-ComputerGraphics/MidTermAssignment/models/bag/backpack.obj");
 
 	Ground the_ground = Ground(glm::mat4(1.0f));
-	
-	the_spider.Init();
 
 	Boids spider_boid;
 
@@ -200,13 +181,13 @@ int main()
 	// directional light
 	lightingShader.SetVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
 	lightingShader.SetVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	lightingShader.SetVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	lightingShader.SetVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	lightingShader.SetVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+	lightingShader.SetVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 	// point light 1
 	lightingShader.SetVec3("pointLights[0].position", pointLightPositions[0]);
 	lightingShader.SetVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
 	lightingShader.SetVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-	lightingShader.SetVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	lightingShader.SetVec3("pointLights[0].specular", glm::vec3(3.0f, 3.0f, 3.0f));
 	lightingShader.SetFloat("pointLights[0].constant", 1.0f);
 	lightingShader.SetFloat("pointLights[0].linear", 0.09);
 	lightingShader.SetFloat("pointLights[0].quadratic", 0.032);
@@ -428,8 +409,9 @@ int main()
 		lightingShader.SetMat4("model", model);
 		lightingShader.SetMat4("projection", projection);
 		lightingShader.SetMat4("view", view);
-		lightingShader.SetFloat("scale_factor", 10.0f);
-		//lug.Draw(lightingShader); //---------------------useful
+		lightingShader.SetFloat("scale_factor", 1.0f);
+		lug.Draw(lightingShader); //---------------------useful
+
 
 
 		boids_ng.DrawBoids(lightingShader);

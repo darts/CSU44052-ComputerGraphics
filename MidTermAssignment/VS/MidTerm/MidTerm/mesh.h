@@ -106,6 +106,18 @@ public:
         glActiveTexture(GL_TEXTURE0);
     }
 
+    void SetDiffBase(glm::vec3 diffuse) {
+        this->colour_data.diffuse = diffuse;
+    }
+
+    void SetAmbientBase(glm::vec3 ambient) {
+        this->colour_data.ambient = ambient;
+    }
+
+    void SetSpecBase(glm::vec3 specular) {
+        this->colour_data.specular = specular;
+    }
+
 private:
     unsigned int VBO, EBO;
 

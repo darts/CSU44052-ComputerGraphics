@@ -26,7 +26,7 @@ public:
 		}
 
 		glm::mat4 model = body_mat;
-		model = glm::scale(model, glm::vec3(0.05f));
+		model = glm::scale(model, glm::vec3(0.005f));
 		shader.SetMat4("model", model);
 		body.Draw(shader, colour_on_next_draw, next_colour);
 		tail.Draw(shader, colour_on_next_draw, next_colour);
@@ -43,16 +43,42 @@ public:
 			legs[i].Draw(shader, colour_on_next_draw, next_colour);
 		}
 		glm::mat4 model = body_mat;
-		model = glm::scale(model, glm::vec3(0.05f));
+		model = glm::scale(model, glm::vec3(0.005f));
 		shader.SetMat4("model", model);
 		body.Draw(shader, colour_on_next_draw, next_colour);
 		tail.Draw(shader, colour_on_next_draw, next_colour);
 	}
+
 	void UpdateMovement(float update_amount) {
 		for (int i = 0; i < 8; i++) {
 			legs[i].UpdateLoc(update_amount);
 		}
 	}
+
+	void SetDiff(glm::vec3 diffuse) {
+		for (int i = 0; i < 8; i++) {
+			legs[i].SetDiff(diffuse);
+		}
+		body.SetDiff(diffuse);
+		tail.SetDiff(diffuse);
+	}
+
+	void SetAmbient(glm::vec3 ambient) {
+		for (int i = 0; i < 8; i++) {
+			legs[i].SetAmbient(ambient);
+		}
+		body.SetAmbient(ambient);
+		tail.SetAmbient(ambient);
+	}
+
+	void SetSpec(glm::vec3 specular) {
+		for (int i = 0; i < 8; i++) {
+			legs[i].SetSpec(specular);
+		}
+		body.SetSpec(specular);
+		tail.SetSpec(specular);
+	}
+
 private:
 	bool colour_on_next_draw = false;
 	glm::vec3 next_colour = glm::vec3(0.0f);

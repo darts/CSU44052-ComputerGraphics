@@ -67,6 +67,11 @@ private:
 			glm::vec2 location = glm::vec2((rand() % START_RANGE) - START_MAX, (rand() % START_RANGE) - START_MAX);
 			glm::vec2 vector = glm::normalize(glm::vec2((rand() % START_RANGE) - START_MAX, (rand() % START_RANGE) - START_MAX));
 			boids[i] = Boid_ng(location, vector);
+			spiders[i].UpdateMovement(rand() % 360);
+			
+			spiders[i].SetDiff(glm::vec3(fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1)));
+			spiders[i].SetAmbient(glm::vec3(fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1)));
+			spiders[i].SetSpec(glm::vec3(fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1), fmod((((float)rand()) / 100), 1)));
 		}
 	}
 

@@ -47,6 +47,21 @@ public:
             model_meshes[i].Draw(shader, custom_colour, diff_colour);
     }
 
+    void SetDiff(glm::vec3 diffuse) {
+        for (unsigned int i = 0; i < model_meshes.size(); i++)
+            model_meshes[i].SetDiffBase(diffuse);
+    }
+
+    void SetAmbient(glm::vec3 ambient) {
+        for (unsigned int i = 0; i < model_meshes.size(); i++)
+            model_meshes[i].SetAmbientBase(ambient);
+    }
+
+    void SetSpec(glm::vec3 specular) {
+        for (unsigned int i = 0; i < model_meshes.size(); i++)
+            model_meshes[i].SetSpecBase(specular);
+    }
+
 private:
     void loadModel(string const& path)
     {
