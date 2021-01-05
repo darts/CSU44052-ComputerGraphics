@@ -13,7 +13,7 @@ constexpr float MAX_X_NG = 20.0f;
 constexpr float MIN_X_NG = -MAX_X_NG;
 constexpr float MAX_Y_NG = 20.0f;
 constexpr float MIN_Y_NG = -MAX_Y_NG;
-constexpr float PLAYER_COLLISION_RANGE = 5.0f;
+constexpr float PLAYER_COLLISION_RANGE = 3.0f;
 
 class Boids_ng {
 public:

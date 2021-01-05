@@ -32,8 +32,8 @@ bool first_mouse_callback = true;
 float time_diff = 0.0f;	// time between current frame and last frame
 float previous_frame = 0.0f;
 
-bool l_dir = true, l_spot = true, l_point = true;
-bool boid_walk = true;
+bool l_dir = true, l_spot = true, l_point = true, player_is_spot = false;
+bool boid_walk = true, demo_walk = true;
 bool allow_camera_vertical = true;
 
 //callback for resizing window
@@ -76,6 +76,11 @@ void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int
 		boid_walk = !boid_walk;
 	if (key == GLFW_KEY_F)
 		ToggleCameraFirstPerson();
+	if (key == GLFW_KEY_C)
+		player_is_spot = !player_is_spot;
+	if (key == GLFW_KEY_X)
+		demo_walk = !demo_walk;
+
 }
 
 void MouseMoveCallback(GLFWwindow* window, double mouse_x_pos, double mouse_y_pos)
@@ -312,7 +317,7 @@ int main()
 		//lightingShader.SetMat4("view", view);
 		
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(-10.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-10.0f, 5.0f, 0.0f));
 		lightingShader.SetMat4("model", model);
 		lightingShader.SetFloat("scale_factor", 1.0f);
 		
@@ -369,8 +374,11 @@ int main()
 
 		if (boid_walk) {
 			boids_ng.MoveBoids(glm::vec2(camera.camera_position.x, camera.camera_position.z), !allow_camera_vertical);
-			lug.UpdateMovement(2);
 			//spider_boid.UpdateBoidsPos(time_diff);
+		}
+
+		if (demo_walk) {
+			lug.UpdateMovement(2);
 		}
 		//spider_boid.DrawBoids(the_shader); //---------------------useful
 
@@ -437,8 +445,8 @@ int main()
 		//update lighting
 		if (l_dir) {
 			lightingShader.SetVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-			lightingShader.SetVec3("dirLight.diffuse", glm::vec3(1.4f, 1.4f, 1.4f));
-			lightingShader.SetVec3("dirLight.specular", glm::vec3(1.5f, 1.5f, 1.5f));
+			lightingShader.SetVec3("dirLight.diffuse", glm::vec3(0.7f, 0.7f, 0.7f));
+			lightingShader.SetVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 		else {
 			lightingShader.SetVec3("dirLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -484,14 +492,18 @@ int main()
 		}
 
 		if (l_spot) {
-			lightingShader.SetVec3("spotLight.diffuse", glm::vec3(10.0f, 10.0f, 10.0f));
-			lightingShader.SetVec3("spotLight.specular", glm::vec3(25.0f, 25.0f, 25.0f));
+			lightingShader.SetVec3("spotLight.diffuse", glm::vec3(5.0f, 5.0f, 5.0f));
+			lightingShader.SetVec3("spotLight.specular", glm::vec3(15.0f, 15.0f, 15.0f));
 		}
 		else {
 			lightingShader.SetVec3("spotLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
 			lightingShader.SetVec3("spotLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 
+		if (player_is_spot) {
+			lightingShader.SetVec3("spotLight.position", camera.camera_position);
+			lightingShader.SetVec3("spotLight.direction", camera.z_axis_vector);
+		}
 
 
 		skybox.Draw(camera, skyboxShader, projection);
